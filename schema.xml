@@ -1,0 +1,1168 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <grammar xmlns="http://relaxng.org/ns/structure/1.0"
+    datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes">
+
+  <start>
+    <element name="data">
+      <interleave>
+        <element name="common">
+          <ref name="common_data"/>
+        </element>
+
+        <element name="publishers">
+          <oneOrMore>
+            <ref name="publisher" />
+          </oneOrMore>
+        </element>
+
+        <element name="agencies">
+          <oneOrMore>
+            <ref name="agency" />
+          </oneOrMore>
+        </element>
+      </interleave>
+    </element>
+  </start>
+
+
+  <define name="common_data">
+    <interleave>
+      <element name="currencies">
+        <oneOrMore>
+          <ref name="currency" />
+        </oneOrMore>
+      </element>
+
+      <element name="categories">
+        <oneOrMore>
+          <ref name="category" />
+        </oneOrMore>
+      </element>
+
+      <element name="exchanges">
+        <oneOrMore>
+          <ref name="exchange" />
+        </oneOrMore>
+      </element>
+
+      <element name="operators">
+        <oneOrMore>
+          <ref name="operator" />
+        </oneOrMore>
+      </element>
+
+      <element name="cellular_isps">
+        <oneOrMore>
+          <element name="value">
+            <data type="string" />
+          </element>
+        </oneOrMore>
+      </element>
+    </interleave>
+  </define>
+
+
+  <define name="currency">
+    <element name="currency">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="exchange_rate">
+        <data type="string" />
+      </attribute>
+    </element>
+  </define>
+
+
+  <define name="category">
+    <element name="category">
+
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <optional>
+        <element name="subcategories">
+          <oneOrMore>
+            <element name="subcategory">
+              <attribute name="id">
+                <data type="string" />
+              </attribute>
+              <attribute name="name">
+                <data type="string" />
+              </attribute>
+            </element>
+          </oneOrMore>
+        </element>
+      </optional>
+    </element>
+  </define>
+
+
+  <define name="exchange">
+    <element name="exchange">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+      
+      <optional>
+        <element name="category_map">
+           <oneOrMore>
+             <ref name="exchange_categories" />
+           </oneOrMore>
+        </element>
+      </optional>
+    </element>
+  </define>
+
+  <define name="exchange_categories">
+    <element name="category">
+
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <element name="category">
+        <data type="string" />
+      </element>
+      <optional>
+        <element name="subcategory">
+          <data type="string" />
+        </element>
+      </optional>
+    </element>
+  </define>
+
+
+  <define name="operator">
+    <element name="operator">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <element name="maxmind_isps">
+        <oneOrMore>
+          <element name="value">
+            <data type="string" />
+          </element>
+        </oneOrMore>
+      </element>
+    </element>
+  </define>
+
+
+  <define name="budget">
+    <element name="budget">
+      <interleave>
+        <element name="pacing">
+          <choice>
+            <value type="string">Even</value>
+            <value type="string">ASAP</value>
+          </choice>
+        </element>
+        <optional>
+          <element name="total">
+            <data type="float"/>
+          </element>
+        </optional>
+        <optional>
+          <element name="daily_cap">
+            <data type="float"/>
+          </element>
+        </optional>
+      </interleave>
+    </element>
+  </define>
+
+
+  <define name="include_or_exclude">
+    <attribute name="type">
+      <choice>
+        <value>include</value>
+        <value>exclude</value>
+      </choice>
+    </attribute>
+  </define>
+
+
+  <define name="weekday_values">
+    <element name="value">
+      <choice>
+        <value>0</value>
+        <value>1</value>
+        <value>2</value>
+        <value>3</value>
+        <value>4</value>
+        <value>5</value>
+        <value>6</value>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="hour_values">
+    <element name="value">
+      <choice>
+        <value>0</value>
+        <value>1</value>
+        <value>2</value>
+        <value>3</value>
+        <value>4</value>
+        <value>5</value>
+        <value>6</value>
+        <value>7</value>
+        <value>8</value>
+        <value>9</value>
+        <value>10</value>
+        <value>11</value>
+        <value>12</value>
+        <value>13</value>
+        <value>14</value>
+        <value>15</value>
+        <value>16</value>
+        <value>17</value>
+        <value>18</value>
+        <value>19</value>
+        <value>20</value>
+        <value>21</value>
+        <value>22</value>
+        <value>23</value>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="targeting">
+    <element name="targeting">
+      <interleave>
+
+        <optional>
+          <element name="day_of_week">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <ref name="weekday_values"/>
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="hour_of_day">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <ref name="hour_values"/>
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="frequency_cap">
+            <attribute name="count">
+              <data type="integer"/>
+            </attribute>
+            <attribute name="hours">
+              <data type="integer"/>
+            </attribute>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="geo">
+            <oneOrMore>
+              <ref name="geo_targeting_objects" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="connection">
+            <ref name="include_or_exclude" />
+            <oneOrMore>
+              <element name="value">
+                <choice>
+                  <value>wifi</value>
+                  <value>cellular</value>
+                </choice>
+              </element>
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="zip">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <element name="value">
+                <data type="string"/>
+              </element>
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="useragent">
+            <interleave>
+
+              <optional>
+                <element name="browser_version_dt">
+                  <oneOrMore>
+                    <ref name="browsers" />
+                  </oneOrMore>
+                </element>
+              </optional>
+
+              <optional>
+                <element name="os_version_dt">
+                  <oneOrMore>
+                    <ref name="os_object" />
+                  </oneOrMore>
+                </element>
+              </optional>
+
+              <optional>
+                <element name="device_model_dt">
+                  <oneOrMore>
+                    <ref name="device_makers" />
+                  </oneOrMore>
+                </element>
+              </optional>
+
+              <optional>
+                <element name="device_type">
+                  <ref name="include_or_exclude"/>
+                  <oneOrMore>
+                    <element name="value">
+                      <data type="string"/>
+                    </element>
+                  </oneOrMore>
+                </element>
+              </optional>
+            </interleave>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="language">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <element name="value">
+                <data type="string"/>
+              </element>
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="pub_side">
+            <oneOrMore>
+              <ref name="pub_side_targeting_objects" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="domain">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <element name="value">
+                <data type="string"/>
+              </element>
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="categories">
+            <oneOrMore>
+              <ref name="category_targeting_objects" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="slot_visibility">
+            <choice>
+              <value>atf</value>
+              <value>btf</value>
+            </choice>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="age">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <ref name="age_targeting" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="gender">
+            <ref name="include_or_exclude"/>
+            <choice>
+              <value>M</value>
+              <value>F</value>
+            </choice>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="location">
+            <ref name="include_or_exclude" />
+            <oneOrMore>
+              <ref name="location_area" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="traffic_source">
+            <ref name="include_or_exclude"/>
+            <oneOrMore>
+              <ref name="traffic_source_targeting" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="operator">
+            <ref name="include_or_exclude" />
+            <oneOrMore>
+              <ref name="operator_targeting" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+      </interleave>
+    </element>
+  </define>
+
+  <define name="traffic_source_targeting">
+    <oneOrMore>
+      <element name="value">
+        <data type="string" />
+      </element>
+    </oneOrMore>
+  </define>
+
+  <define name="operator_targeting">
+    <oneOrMore>
+      <element name="value">
+        <data type="string" />
+      </element>
+    </oneOrMore>
+  </define>  
+  
+  <define name="age_targeting">    
+    <oneOrMore>
+      <element name="value">
+        <data type="string" />
+      </element>
+    </oneOrMore>
+  </define>
+
+  <define name="location_area">
+    <element name="area">
+      <interleave>
+        <element name="latitude">
+          <data type="float" />
+        </element>
+
+        <element name="longitude">
+          <data type="float" />
+        </element>
+
+        <element name="radius">
+          <data type="float" />
+        </element>
+      </interleave>
+    </element>
+  </define>
+
+  <define name="os_object">
+    <element name="os">
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+      <choice>
+        <attribute name="value">
+          <data type="boolean"/>
+        </attribute>
+        <oneOrMore>
+          <element name="version">
+            <attribute name="id">
+              <data type="string"/>
+            </attribute>
+            <attribute name="value">
+              <data type="boolean"/>
+            </attribute>
+          </element>
+        </oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="browsers">
+    <element name="browser">
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+      <choice>
+        <attribute name="value">
+          <data type="boolean"/>
+        </attribute>
+        <oneOrMore>
+          <element name="version">
+            <attribute name="id">
+              <data type="string"/>
+            </attribute>
+            <attribute name="value">
+              <data type="boolean"/>
+            </attribute>
+          </element>
+        </oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="device_makers">
+    <element name="device_maker">
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+      <choice>
+        <attribute name="value">
+          <data type="boolean"/>
+        </attribute>
+        <oneOrMore>
+          <element name="device_model">
+            <attribute name="id">
+              <data type="string"/>
+            </attribute>
+            <attribute name="value">
+              <data type="boolean"/>
+            </attribute>
+          </element>
+        </oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="category_targeting_objects">
+    <element name="category">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+      <choice>
+        <attribute name="value">
+          <data type="boolean"/>
+        </attribute>
+        <oneOrMore>
+          <element name="subcategory">
+            <attribute name="id">
+              <data type="string"/>
+            </attribute>
+            <attribute name="value">
+              <data type="boolean"/>
+            </attribute>
+          </element>
+        </oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="pub_side_targeting_objects">
+    <element name="publisher">
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+      <choice>
+        <attribute name="value">
+          <data type="boolean"/>
+        </attribute>
+        <oneOrMore>
+          <element name="site">
+            <attribute name="id">
+              <data type="string"/>
+            </attribute>
+            <choice>
+              <attribute name="value">
+                <data type="boolean"/>
+              </attribute>
+              <oneOrMore>
+                <element name="placement">
+                  <attribute name="id">
+                    <data type="string"/>
+                  </attribute>
+                  <attribute name="value">
+                    <data type="boolean"/>
+                  </attribute>
+                </element>
+              </oneOrMore>
+            </choice>
+          </element>
+        </oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="geo_targeting_objects">
+    <element name="country">
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+      <choice>
+        <attribute name="value">
+          <data type="boolean"/>
+        </attribute>
+        <oneOrMore>
+          <element name="region">
+            <attribute name="id">
+              <data type="string"/>
+            </attribute>
+            <choice>
+              <attribute name="value">
+                <data type="boolean"/>
+              </attribute>
+              <oneOrMore>
+                <element name="city">
+                  <attribute name="id">
+                    <data type="string"/>
+                  </attribute>
+                  <attribute name="value">
+                    <data type="boolean"/>
+                  </attribute>
+                </element>
+              </oneOrMore>
+            </choice>
+          </element>
+        </oneOrMore>
+      </choice>
+    </element>
+  </define>
+
+
+  <define name="publisher_advertiser">
+    <element name="advertiser">
+
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <interleave>
+        <element name="currency">
+          <data type="string" />
+        </element>
+
+        <element name="campaigns">
+          <oneOrMore>
+            <ref name="publisher_campaign" />
+          </oneOrMore>
+        </element>
+
+      </interleave>
+    </element>
+  </define>
+
+
+  <define name="publisher_campaign">
+    <element name="campaign">
+      <ref name="common_campaign_properties" />
+    </element>
+  </define>
+
+  <define name="common_campaign_properties">
+    <attribute name="id">
+      <data type="string"/>
+    </attribute>
+
+    <attribute name="name">
+      <data type="string"/>
+    </attribute>
+
+    <interleave>
+      <element name="start_date">
+        <ref name="date" />
+      </element>
+
+      <element name="end_date">
+        <ref name="date" />
+      </element>
+
+      <optional>
+        <ref name="budget" />
+      </optional>
+
+      <element name="line_items">
+        <interleave>
+          <oneOrMore>
+            <ref name="line_item"/>
+          </oneOrMore>
+        </interleave>
+      </element>
+
+      <optional>
+        <element name="creatives">
+          <oneOrMore>
+            <ref name="creative"/>
+          </oneOrMore>
+        </element>
+      </optional>
+
+    </interleave>
+  </define>
+
+
+  <define name="line_item">
+    <element name="line_item">
+
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+
+      <attribute name="name">
+        <data type="string"/>
+      </attribute>
+
+      <interleave>
+        <element name="start_date">
+          <ref name="date" />
+        </element>
+
+        <element name="end_date">
+          <ref name="date" />
+        </element>
+
+        <element name="priority">
+          <choice>
+            <value>0</value>
+            <value>1</value>
+            <value>2</value>
+          </choice>
+        </element>
+
+        <optional>
+          <element name="pricing">
+            <interleave>
+              <element name="type">
+                <choice>
+                  <value>CPM</value>
+                  <value>CPC</value>
+                </choice>
+              </element>
+              <element name="amount">
+                <data type="float"/>
+              </element>
+            </interleave>
+          </element>
+        </optional>
+
+        <optional>
+          <ref name="budget"/>
+        </optional>
+
+        <optional>
+          <ref name="targeting"/>
+        </optional>
+
+        <optional>
+          <element name="creatives">
+            <oneOrMore>
+              <element name="id">
+                <data type="string"/>
+              </element>
+            </oneOrMore>
+          </element>
+        </optional>
+
+      </interleave>
+    </element>
+  </define>
+
+  <define name="date">
+    <data type="string">
+      <param name="pattern">\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}</param>
+    </data>
+  </define>
+
+  <define name="creative">
+    <element name="creative">
+
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+
+      <attribute name="name">
+        <data type="string"/>
+      </attribute>
+
+      <interleave>
+        <element name="size">
+          <data type="string"/>
+        </element>
+
+        <element name="type">
+          <choice>
+            <value type="string">text</value>
+            <value type="string">image</value>
+            <value type="string">rich_media</value>
+          </choice>
+        </element>
+
+        <element name="sdk_api_type">
+          <choice>
+            <value>other</value>
+            <value>mraid</value>
+            <value>ormma</value>
+          </choice>
+        </element>
+
+        <element name="can_track_clicks">
+          <data type="boolean"/>
+        </element>
+
+        <optional>
+          <element name="click_through_url">
+            <data type="string" />
+          </element>
+        </optional>
+
+        <optional>
+          <element name="html_content">
+            <data type="string"/>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="image_url">
+            <data type="string"/>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="image_click_url">
+            <data type="string"/>
+          </element>
+        </optional>
+
+      </interleave>
+    </element>
+  </define>
+
+
+  <define name="publisher">
+    <element name="publisher">
+
+      <attribute name="id">
+        <data type="string"/>
+      </attribute>
+
+      <attribute name="name">
+        <data type="string"/>
+      </attribute>
+      <interleave>
+        <element name="currency">
+          <data type="string" />
+        </element>
+
+        <element name="sites">
+          <oneOrMore>
+            <ref name="site"/>
+          </oneOrMore>
+        </element>
+
+        <optional>
+          <element name="advertisers">
+            <oneOrMore>
+              <ref name="publisher_advertiser" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+        <optional>
+          <element name="house_campaigns">
+            <oneOrMore>
+              <ref name="publisher_campaign" />
+            </oneOrMore>
+          </element>
+        </optional>
+
+      </interleave>
+    </element>
+  </define>
+
+  <define name="site">
+    <element name="site">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <element name="placements">
+        <oneOrMore>
+          <ref name="placement" />
+        </oneOrMore>
+      </element>
+    </element>
+  </define>
+
+  <define name="placement">
+    <element name="placement">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <interleave>
+        <element name="size">
+          <data type="string" />
+        </element>
+
+        <element name="refresh_time">
+          <data type="integer" />
+        </element>
+
+        <element name="categories">
+            <oneOrMore>
+              <ref name="placement_category" />
+            </oneOrMore>
+        </element>
+
+        <element name="pricing">
+          <ref name="placement_pricing" />
+        </element>
+
+        <optional>
+          <element name="targeting">
+            <ref name="placement_targeting" />
+          </element>
+        </optional>
+
+        <element name="floor_cpm">
+          <data type="float" />
+        </element>
+      </interleave>
+    </element>
+  </define>
+
+
+  <define name="placement_category">
+    <element name="category">
+
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <optional>
+        <element name="subcategories">
+          <oneOrMore>
+            <element name="value">
+              <data type="string" />
+            </element>
+          </oneOrMore>
+        </element>
+      </optional>
+
+    </element>
+  </define>
+
+  <define name="placement_pricing">
+    <interleave>
+
+      <optional>
+        <element name="text">
+          <ref name="format_pricing" />
+        </element>
+      </optional>
+
+      <optional>
+        <element name="image">
+          <ref name="format_pricing" />
+        </element>
+      </optional>
+
+      <optional>
+        <element name="rich_media">
+          <ref name="format_pricing" />
+        </element>
+      </optional>
+    </interleave>
+  </define>
+
+
+  <define name="format_pricing">
+    <interleave>
+      <optional>
+        <element name="direct">
+          <ref name="traffic_source_pricing" />
+        </element>
+      </optional>
+
+      <optional>
+        <element name="house">
+          <ref name="traffic_source_pricing" />
+        </element>
+      </optional>
+
+      <optional>
+        <element name="network">
+          <ref name="traffic_source_pricing" />
+        </element>
+      </optional>
+
+      <optional>
+        <element name="rtb">
+          <ref name="traffic_source_pricing" />
+        </element>
+      </optional>
+    </interleave>
+  </define>
+
+
+  <define name="traffic_source_pricing">
+    <interleave>
+      <element name="type">
+        <choice>
+          <value>CPM</value>
+          <value>RevShare</value>
+        </choice>
+      </element>
+
+      <element name="amount">
+        <data type="float" />
+      </element>
+
+      <element name="payout_type">
+        <choice>
+          <value>fee</value>
+          <value>revenue</value>
+        </choice>
+      </element>
+    </interleave>
+  </define>
+
+
+  <define name="placement_targeting">
+    <optional>
+      <element name="advertisers">
+        <oneOrMore>
+          <ref name="advertiser_targeting_object" />
+        </oneOrMore>
+      </element>
+    </optional>
+
+    <optional>
+      <element name="categories">
+          <oneOrMore>
+            <ref name="category_targeting_objects" />
+          </oneOrMore>
+      </element>
+    </optional>
+  </define>
+
+  <define name="advertiser_targeting_object">
+    <element name="advertiser">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="value">
+        <data type="boolean" />
+      </attribute>
+    </element>
+  </define>
+
+  <define name="subcategory_targeting">
+    <element name="subcategory">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="value">
+        <data type="boolean" />
+      </attribute>
+    </element>
+  </define>
+
+  <define name="agency">
+    <element name="agency">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <element name="advertisers">
+        <oneOrMore>
+          <ref name="agency_advertiser" />
+        </oneOrMore>
+      </element>
+    </element>
+  </define>
+
+
+  <define name="agency_advertiser">
+    <element name="advertiser">
+      <attribute name="id">
+        <data type="string" />
+      </attribute>
+
+      <attribute name="name">
+        <data type="string" />
+      </attribute>
+
+      <interleave>
+        <element name="currency">
+          <data type="string" />
+        </element>
+
+        <element name="campaigns">
+          <oneOrMore>
+            <ref name="advertiser_campaign" />
+          </oneOrMore>
+        </element>
+      </interleave>
+    </element>
+  </define>
+
+  <define name="advertiser_campaign">
+    <element name="campaign">
+      <ref name="common_campaign_properties" />
+    </element>
+  </define>
+
+</grammar>
